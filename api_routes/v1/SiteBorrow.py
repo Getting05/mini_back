@@ -1,4 +1,6 @@
 from flask import jsonify, request
+from sqlalchemy import func
+
 from models.SitesBorrow import SitesBorrow, db
 from . import api_v1
 
@@ -28,7 +30,7 @@ def cancel_booking(booking_id):
 
 
 # 获取所有可借用的场地
-# todo 时间段内可借用的场地
+
 @api_v1.route('/site-borrow/available', methods=['GET'])
 def get_available_sites():
     data = request.get_json()
@@ -80,7 +82,7 @@ def get_site_bookings():
         "data": {
             "apply_id": data.get('apply_id'),
             "state": 1,
-            "updated_at": "2024-02-13T15:30:00Z"  # TODO 要改成当前时间戳
+            "updated_at": func.now()
         }
     }
     )
