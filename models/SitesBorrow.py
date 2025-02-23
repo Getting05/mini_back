@@ -9,6 +9,7 @@ class SitesBorrow(Base):
     def __init__(self, id, apply_id, site_name, name, student_id, phonenum, email, purpose, mentor_name,
                  mentor_phone_num, picture, start_time, end_time, state, reason, created_at, updated_at):
         super().__init__(id)
+        self.id = id
         self.site_name = site_name
         self.name = name
         self.student_id = student_id
