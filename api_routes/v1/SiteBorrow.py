@@ -17,16 +17,16 @@ def get_site_bookings():
     }
 
 
-# 删除一条场地借用申请
-@api_v1.route('/site-borrow/<int:booking_id>', methods=['DELETE'])
-def cancel_booking(booking_id):
-    booking = SitesBorrow.query.filter_by(id=booking_id).first()
+# 取消一条场地借用申请
+@api_v1.route('/site-borrow/<int:apply_id>', methods=['DELETE'])
+def cancel_booking(apply_id):
+    booking = SitesBorrow.query.filter_by(id=apply_id).first()
     if booking:
         db.session.delete(booking)
         db.session.commit()
-        return jsonify({"message": f"Cancel booking {booking_id}"}), 204
+        return jsonify({"message": f"Cancel booking {apply_id}"}), 204
     else:
-        return jsonify({"message": f"Booking {booking_id} not found"}), 404
+        return jsonify({"message": f"Booking {apply_id} not found"}), 404
 
 
 # 获取所有可借用的场地
