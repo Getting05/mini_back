@@ -38,7 +38,7 @@ def get_available_sites():
     available_sites = SitesBorrow.query.filter(
         SitesBorrow.start_time >= start_time,
         SitesBorrow.end_time <= end_time,
-        SitesBorrow.state != 1)  # Assuming state 1 means unavailable
+        SitesBorrow.state != 1)
     return jsonify({
         "code": 200,
         "status": "success",
