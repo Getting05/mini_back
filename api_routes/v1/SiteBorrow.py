@@ -31,14 +31,27 @@ def cancel_booking(booking_id):
 # todo 时间段内可借用的场地
 @api_v1.route('/site-borrow/available', methods=['GET'])
 def get_available_sites():
-    return jsonify({"message": "Get available sites"})
+    data = request.get_json()
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+    available_sites = SitesBorrow.query.filter(
+        SitesBorrow.start_time >= start_time,
+        SitesBorrow.end_time <= end_time,
+        SitesBorrow.state != 1)  # Assuming state 1 means unavailable
+    return jsonify({
+        "code": 200,
+        "status": "success",
+        "message": "Get available sites",
+        "data": [site.site_name for site in available_sites]
+    })
 
 
 # 添加一条待审核的场地借用申请条目
 @api_v1.route('/site-borrow', methods=['POST'])
 def siteborrow_apply():
     data = request.get_json()
-    new_apply = SitesBorrow(apply_id=data.get('apply_id'), name=data.get('name'), student_id=data.get('student_id'), phonenum=data.get('phonenum'),
+    new_apply = SitesBorrow(apply_id=data.get('apply_id'), name=data.get('name'), student_id=data.get('student_id'),
+                            phonenum=data.get('phonenum'),
                             email=data.get('email'), purpose=data.get('purpose'), mentor_name=data.get('mentor_name'),
                             mentor_phone_num=data.get('mentor_phone_num'), picture=data.get('picture'),
                             start_time=data.get('start_time'), end_time=data.get('end_time'))
