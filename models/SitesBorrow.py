@@ -1,7 +1,5 @@
-from .base import BaseModel
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Text
-from sqlalchemy.sql import func
 from utils.database import Base
 
 db = SQLAlchemy()
