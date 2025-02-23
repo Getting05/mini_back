@@ -1,34 +1,47 @@
 from flask import jsonify, request
-
-from models.SitesBorrow import SitesBorrow
+from models.SitesBorrow import SitesBorrow, db
 from . import api_v1
 
 
-@api_v1.route('/site_borrow', methods=['GET'])
+# 获取场地借用booking条目
+@api_v1.route('/site-borrow', methods=['GET'])
 def get_site_bookings():
-    return jsonify({"message": "Get all site bookings"})
+    items = db.query(SitesBorrow.type.distinct()).all()
+    return {
+        "code": 200,
+        "status": "success",
+        "message": "场地借用数据条目获取成功",
+        "data": [item[0] for item in items]
+    }
 
 
-@api_v1.route('/site_borrow/<int:booking_id>', methods=['DELETE'])
+# 删除一条场地借用申请
+@api_v1.route('/site-borrow/<int:booking_id>', methods=['DELETE'])
 def cancel_booking(booking_id):
-    return jsonify({"message": f"Cancel booking {booking_id}"}), 204
+    booking = SitesBorrow.query.filter_by(id=booking_id).first()
+    if booking:
+        db.session.delete(booking)
+        db.session.commit()
+        return jsonify({"message": f"Cancel booking {booking_id}"}), 204
+    else:
+        return jsonify({"message": f"Booking {booking_id} not found"}), 404
 
 
-@api_v1.route('/site_borrow/available', methods=['GET'])
+# 获取所有可借用的场地
+# todo 时间段内可借用的场地
+@api_v1.route('/site-borrow/available', methods=['GET'])
 def get_available_sites():
     return jsonify({"message": "Get available sites"})
 
 
 # 添加一条待审核的场地借用申请条目
-@api_v1.route('/site_borrow', methods=['POST'])
+@api_v1.route('/site-borrow', methods=['POST'])
 def siteborrow_apply():
     data = request.get_json()
-    new_apply = SitesBorrow(apply_id=data.get('apply_id'), \
-                            name=data.get('name'), student_id=data.get('student_id'), phonenum=data.get('phonenum'), \
-                            email=data.get('email'), purpose=data.get('purpose'), mentor_name=data.get('mentor_name'), \
+    new_apply = SitesBorrow(apply_id=data.get('apply_id'), name=data.get('name'), student_id=data.get('student_id'), phonenum=data.get('phonenum'),
+                            email=data.get('email'), purpose=data.get('purpose'), mentor_name=data.get('mentor_name'),
                             mentor_phone_num=data.get('mentor_phone_num'), picture=data.get('picture'),
-                            start_time=data.get('start_time'), \
-                            end_time=data.get('end_time'))
+                            start_time=data.get('start_time'), end_time=data.get('end_time'))
     SitesBorrow.session.add(new_apply)
     SitesBorrow.session.commit()
     return jsonify({"code": 200,
@@ -40,7 +53,7 @@ def siteborrow_apply():
 
 
 # 更改场地借用申请的状态键
-@api_v1.route('/site_borrow', methods=['post'])
+@api_v1.route('/site-borrow', methods=['post'])
 def get_site_bookings():
     data = request.get_json()
     apply = SitesBorrow.query.filter_by(apply_id=data.get('apply_id')).first()
@@ -60,8 +73,8 @@ def get_site_bookings():
     )
 
 
-# 基管部审核⻚面拉取信息。
-@api_v1.route('/site_borrow/<string:apply_id>', methods=['GET'])
+# 基管部审核页面拉取信息。
+@api_v1.route('/site-borrow/<string:apply_id>', methods=['GET'])
 def pull_booking(apply_id):
     if apply_id:
         apply_data = SitesBorrow.query.filter_by(apply_id=apply_id).first()

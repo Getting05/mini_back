@@ -1,14 +1,31 @@
 from .base import BaseModel
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.sql import func
 from utils.database import Base
 
+db = SQLAlchemy()
 
 class SitesBorrow(Base):
-    def __init__(self, id, site_name, borrow_date):
+    def __init__(self, id, site_name, name, student_id, phonenum, email, purpose, mentor_name, mentor_phone_num, picture, start_time, end_time, state, reason, created_at, updated_at):
         super().__init__(id)
         self.site_name = site_name
-        self.borrow_date = borrow_date
+        self.name = name
+        self.student_id = student_id
+        self.phonenum = phonenum
+        self.email = email
+        self.purpose = purpose
+        self.mentor_name = mentor_name
+        self.mentor_phone_num = mentor_phone_num
+        self.picture = picture
+        self.start_time = start_time
+        self.end_time = end_time
+        self.state = state
+        self.reason = reason
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.apply_id = self.generate_apply_id()
+
 
 
     __tablename__ = 'sites_borrow'
