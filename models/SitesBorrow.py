@@ -44,4 +44,4 @@ class SitesBorrow(Base):
     state = Column(Integer, default=0)  # 0: 待审核，1: 已通过 2: 已拒绝 3: 已取消
     reason = Column(Text, default=None)
     created_at = Column(String)
-    updated_at = Column(String)  # 使用DateTime类型还是String?
+    updated_at = Column(String)
