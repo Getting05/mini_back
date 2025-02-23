@@ -2,6 +2,11 @@ from flask import jsonify, request
 from sqlalchemy import func
 from models.SitesBorrow import SitesBorrow, db
 from . import api_v1
+import iso8601
+
+iso_time_str = "2022-01-01T12:00:00Z"
+iso_time = iso8601.parse_date(iso_time_str)
+print(iso_time)
 
 
 # 获取场地借用booking条目
@@ -28,16 +33,15 @@ def cancel_booking(apply_id):
         return jsonify({"message": f"Booking {apply_id} not found"}), 404
 
 
-# 获取所有可借用的场地
-
+# 获取所有可借用的场地, 不可用，没有可借用场地表对应其状态，无法单从场地借用申请表中获取可借用场地
 @api_v1.route('/site-borrow/available', methods=['GET'])
 def get_available_sites():
     data = request.get_json()
-    start_time = data.get('start_time')
-    end_time = data.get('end_time')
+    start_time = iso8601.parse_date(data.get('start_time'))
+    end_time = iso8601.parse_date(data.get('end_time'))
     available_sites = SitesBorrow.query.filter(
-        SitesBorrow.start_time >= start_time,
-        SitesBorrow.end_time <= end_time,
+        iso8601.parse_date(SitesBorrow.start_time) >= start_time,
+        iso8601.parse_date(SitesBorrow.end_time) <= end_time,
         SitesBorrow.state != 1)
     return jsonify({
         "code": 200,
